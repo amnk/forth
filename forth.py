@@ -24,57 +24,67 @@ def f_put(f_stack, args):
     """
     Should be called with two values: stack and a value to append to the stack
     """
-    if len(args)<>1:
-            sys.exit(f_error.format(f="PUT"))
-    f_stack.append(_value(args[0]))
+    f_stack.append(_value(args))
 
 def f_add(f_stack, args=None):
     """
-    Returns a summary of f_stack[-1] and f_stack[-2]
+    Takes two values from f_stack (simple list), and puts their summary back
     """
     if len(f_stack)<2:
         sys.exit(s_error)
     try:
-        print(f_stack[-1] + f_stack[-2])
+        summary = f_stack[-1] + f_stack[-2]
     except TypeError:
         sys.exit(f_error.format(f="ADD"))
+    finally:
+        f_pop(f_stack, n=2)
+        f_put(f_stack, str(summary))
 
 def f_sub(f_stack, args=None):
     """
-    Substracts two last values in the f_stack (simple list).
+    Takes two values from f_stack (simple list), and puts their difference back
     """
     if len(f_stack)<2:
          sys.exit(s_error)
     try:
-        print(f_stack[-1] - f_stack[-2])
+        sub=f_stack[-1] - f_stack[-2]
     except TypeError:
         sys.exit(f_error.format(f="SUB"))
-    pass
+    finally:
+        f_pop(f_stack, n=2)
+        f_put(f_stack, str(sub))
+        
 
 def f_print(f_stack, args=None):
     """
-    Accepts f_stack (simple list) and prints value in it
+    Accepts f_stack (simple list), pops a value from it and prints that value
     """
     if len(f_stack)<1:
         sys.exit(s_error)
-    print(f_stack[-1])
+    print(f_stack.pop())
 
-def f_pop(f_stack, args=None):
+def f_pop(f_stack, args=None, n=1):
     """
-    Accepts f_stack (simple list) and removed one value
+    Accepts f_stack (simple list), deletes n elements and returns them 
     """
-    if len(f_stack)<1:
+    if len(f_stack)<n:
         sys.exit(s_error)
-    f_stack.pop()
+    elements = f_stack[-n::]
+    del(f_stack[-n::])
+    return elements
 
 def run_line(s, v_dict):
     s.strip()
-    line=s.split()
-    
-    if (line[0] not in def_commands.keys()):
+    line = s.split()
+    check = len(line)
+    if (line[0] not in def_commands.keys()) or (check>2):
         sys.exit("Bad command syntax in \n\t{0}".format(s))
     command = line[0]
-    arguments = line[1:]
+    if check>1:
+        arguments = line[1]
+    else:
+        arguments = None
+ 
     def_commands[command](f_stack=v_dict, args=arguments)
 
 
@@ -94,5 +104,6 @@ if len(sys.argv)<>2:
 
 for line in open(sys.argv[1], 'r'):
     run_line(line, stack)
+    print(stack)
 
 
