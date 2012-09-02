@@ -20,58 +20,52 @@ def _value(value):
     elif value.isdigit() or value.lstrip('-').isdigit():
         return int(value) 
 
-def f_put(**args):
+def f_put(f_stack, args):
     """
-    Should be called with two values: dict and a value to append to dict
+    Should be called with two values: stack and a value to append to the stack
     """
-    v_dict = args['dictionary']
-    value = args['arguments']
-    if len(value)<>1:
+    if len(args)<>1:
             sys.exit(f_error.format(f="PUT"))
-    v_dict.append(_value(value[0]))
+    f_stack.append(_value(args[0]))
 
-def f_add(**args):
+def f_add(f_stack, args=None):
     """
-    Should be called with one arg: dict. 
-    Returns a summary of dict[-1] and dict[-2]
+    Returns a summary of f_stack[-1] and f_stack[-2]
     """
-    v_dict=args['dictionary']
-    if len(v_dict)<2:
+    if len(f_stack)<2:
         sys.exit(s_error)
     try:
-        print(v_dict[-1] + v_dict[-2])
+        print(f_stack[-1] + f_stack[-2])
     except TypeError:
         sys.exit(f_error.format(f="ADD"))
 
-def f_sub(**args):
+def f_sub(f_stack, args=None):
     """
+    Substracts two last values in the f_stack (simple list).
     """
-    v_dict=args['dictionary']
-    if len(v_dict)<2:
+    if len(f_stack)<2:
          sys.exit(s_error)
     try:
-        print(v_dict[-1] - v_dict[-2])
+        print(f_stack[-1] - f_stack[-2])
     except TypeError:
         sys.exit(f_error.format(f="SUB"))
     pass
 
-def f_print(**args):
+def f_print(f_stack, args=None):
     """
-    Accepts a dict and prints last value in it
+    Accepts f_stack (simple list) and prints value in it
     """
-    v_dict=args['dictionary']
-    if len(v_dict)<1:
+    if len(f_stack)<1:
         sys.exit(s_error)
-    print(v_dict[-1])
+    print(f_stack[-1])
 
-def f_pop(**args):
+def f_pop(f_stack, args=None):
     """
-    Accepts a dict and removes last element from it
+    Accepts f_stack (simple list) and removed one value
     """
-    v_dict=args['dictionary']
-    if len(v_dict)<1:
+    if len(f_stack)<1:
         sys.exit(s_error)
-    v_dict.pop(len(v_dict)-1)
+    f_stack.pop()
 
 def run_line(s, v_dict):
     s.strip()
@@ -80,8 +74,8 @@ def run_line(s, v_dict):
     if (line[0] not in def_commands.keys()):
         sys.exit("Bad command syntax in \n\t{0}".format(s))
     command = line[0]
-    args = line[1:]
-    def_commands[command](dictionary=v_dict, arguments=args)
+    arguments = line[1:]
+    def_commands[command](f_stack=v_dict, args=arguments)
 
 
 def_commands = {'put':f_put, 'add':f_add, 'sub':f_sub, 'print':f_print, 'pop':f_pop}
